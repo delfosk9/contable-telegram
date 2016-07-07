@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+
+import telebot # Librería de la API del bot.
+from telebot import types # Tipos para la API del bot.
+import time # Librería para hacer que el programa que controla el bot no se acabe.
+global money
+
+
+TOKEN = '264628907:AAHMtqE1uBjGN_axcrh0pOVusiTIRl3S_O4' # Nuestro tokken del bot (el que @BotFather nos dió).
+
+bot = telebot.TeleBot(TOKEN) # Creamos el objeto de nuestro bot.
+#############################################
+#Listener
+def listener(messages):
+    for m in messages:
+        cid = m.chat.id
+        if m.content_type == 'text': # Sólo saldrá en el log los mensajes tipo texto
+            if cid > 0:
+                mensaje = str(m.chat.first_name) + " [" + str(cid) + "]: " + m.text
+            else:
+                mensaje = str(m.from_user.first_name) + "[" + str(cid) + "]: " + m.text 
+            f = open('log.txt', 'a')
+            f.write(mensaje + "\n")
+            f.close()
+            print mensaje
+
+bot.set_update_listener(listener) # Así, le decimos al bot que utilice como función escuchadora nuestra función 'listener' declarada arriba.
+#############################################
+#Funciones
+@bot.message_handler(commands=['setmoney'])
+def command_setmoney(m):
+    cid=m.chat.id
+    money=int(m.text.split()[1])
+    bot.send_message(cid, str(m.from_user.first_name) + " ha cambiado el dinero a  " + str(money) + " €" )
+    return money
+    #hasta qui para darle un valor inicial a la variable money
+@bot.message_handler(commands=['dinero'])
+def command_dinero(m):
+    cid=m.chat.id
+    bot.send_message(cid, str(m.from_user.first_name) + " tenemos disponible un total de " + str(money) + " €" )#muestra el dinero disponible
+    #displayea la variable money para que todos puedan ver cuanto dinero hay
+#@bot.message_handler(commands=['gasto'])
+#def command_gasto(m):
+   # cid=m.chat.id
+    #money=money-int(m.text.split()[1])
+   # bot.send_message(cid, str(m.from_user.first_name) + " tenemos disponible un total de " + str(money) + " €" )#muestra el dinero disponible
+   #para introducir los gastos /gasto #
+#@bot.message_handler(commands=['ingreso'])
+#def command_ingreso(m):
+    #cid=m.chat.id
+    #money=money+int(m.text.split()[1])
+    #bot.send_message(cid, str(m.from_user.first_name) + " tenemos disponible un total de " + str(money) + " €" )#muestra el dinero disponible
+    #para introducir los ingresos /ingresos #
+ 
+    #Peticiones
+bot.polling(none_stop=True) # Con esto, le decimos al bot que siga funcionando incluso si encuentra algún fallo
